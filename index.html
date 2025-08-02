@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>メインメニュー</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 メインメニュー画面</h1>
+            <div class="subtitle">EME_RTS_A001 - システム統合メニュー</div>
+        </div>
+
+        <div class="screen-mockup">
+            <div class="device-frame">
+                <div class="screen">
+                    <div class="screen-header">メニュー</div>
+                    <div class="screen-content">
+                        <div id="menu-container" style="display: none;">
+                             <a href="#" data-url="./A001_100.html" class="menu-item primary">1 仕込み開始</a>
+                             <a href="#" data-url="./A001_200.html" class="menu-item secondary">2 仕込みｷｬﾝｾﾙ</a>
+                             <a href="#" data-url="./A002_200.html" class="menu-item support">3 ﾏｽﾀｰﾊﾞｯﾁ準備</a>
+                             <a href="#" data-url="./A041_100.html" class="menu-item support">4 社内生産品受入</a>
+                             <a href="#" data-url="./A003_100.html" class="menu-item management">5 仕込み開始(NS化)</a>
+                             <a href="#" data-url="./A003_200.html" class="menu-item management">6 仕込みｷｬﾝｾﾙ(NS化)</a>
+                             <a href="#" data-url="./A001_300.html" class="menu-item">7 作業者設定</a>
+                        </div>
+                        
+                        <div id="message-area" style="display: none; margin-top: 40px; padding: 15px; background: #e9ecef; border-radius: 6px; text-align: center; font-size: 0.8rem; color: #666;">
+                            </div>
+                    </div>
+                    <div class="screen-footer">
+                        作業者: <span id="worker-name">[未設定]</span>
+                    </div>
+                </div>
+            </div>
+            <div class="details-panel">
+                </div>
+        </div>
+    </div>
+    
+    <script type="module" src="js/supabase-client.js"></script>
+    <script type="module" src="js/menu.js"></script>
+</body>
+</html>
