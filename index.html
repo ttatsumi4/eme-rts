@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>メインメニュー</title>
+    <title>📱 メインメニュー画面</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -16,16 +16,18 @@
         <div class="screen-mockup">
             <div class="device-frame">
                 <div class="screen">
-                    <div class="screen-header">メニュー</div>
+                    <div class="screen-header">
+                        ﾒﾆｭｰ
+                    </div>
                     <div class="screen-content">
                         <div id="menu-container" style="display: none;">
-                             <a href="#" data-url="./A001_100.html" class="menu-item primary">1 仕込み開始</a>
-                             <a href="#" data-url="./A001_200.html" class="menu-item secondary">2 仕込みｷｬﾝｾﾙ</a>
-                             <a href="#" data-url="./A002_200.html" class="menu-item support">3 ﾏｽﾀｰﾊﾞｯﾁ準備</a>
-                             <a href="#" data-url="./A041_100.html" class="menu-item support">4 社内生産品受入</a>
-                             <a href="#" data-url="./A003_100.html" class="menu-item management">5 仕込み開始(NS化)</a>
-                             <a href="#" data-url="./A003_200.html" class="menu-item management">6 仕込みｷｬﾝｾﾙ(NS化)</a>
-                             <a href="#" data-url="./A001_300.html" class="menu-item">7 作業者設定</a>
+                             <a data-url="./A001_100.html" class="menu-item primary">1 仕込み開始</a>
+                             <a data-url="./A001_200.html" class="menu-item secondary">2 仕込みｷｬﾝｾﾙ</a>
+                             <a data-url="./A002_200.html" class="menu-item support">3 ﾏｽﾀｰﾊﾞｯﾁ準備</a>
+                             <a data-url="./A041_100.html" class="menu-item support">4 社内生産品受入</a>
+                             <a data-url="./A003_100.html" class="menu-item management">5 仕込み開始(NS化)</a>
+                             <a data-url="./A003_200.html" class="menu-item management">6 仕込みｷｬﾝｾﾙ(NS化)</a>
+                             <a data-url="./A001_300.html" class="menu-item">7 作業者設定</a>
                         </div>
                         
                         <div id="message-area" style="display: none; margin-top: 40px; padding: 15px; background: #e9ecef; border-radius: 6px; text-align: center; font-size: 0.8rem; color: #666;">
@@ -36,8 +38,58 @@
                     </div>
                 </div>
             </div>
+
             <div class="details-panel">
+                <h3>📋 メニュー詳細</h3>
+                
+                <div class="menu-details">
+                    <div class="menu-category core">
+                        <h4>🔄 コア業務</h4>
+                        <ul class="menu-list">
+                            <li>
+                                <span>1 仕込み開始</span>
+                                <span class="menu-code">A001_100</span>
+                            </li>
+                            <li>
+                                <span>2 仕込みキャンセル</span>
+                                <span class="menu-code">A001_200</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="menu-category support">
+                        <h4>🔧 サポート業務</h4>
+                        <ul class="menu-list">
+                             <li>
+                                <span>3 マスターバッチ準備</span>
+                                <span class="menu-code">A002_200</span>
+                            </li>
+                            <li>
+                                <span>4 社内生産品受入</span>
+                                <span class="menu-code">A041_100</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="menu-category admin">
+                        <h4>⚙️ 管理・設定</h4>
+                        <ul class="menu-list">
+                            <li>
+                                <span>5 仕込み開始(NS化)</span>
+                                <span class="menu-code">A003_100</span>
+                            </li>
+                            <li>
+                                <span>6 仕込みキャンセル(NS化)</span>
+                                <span class="menu-code">A003_200</span>
+                            </li>
+                            <li>
+                                <span>7 作業者設定</span>
+                                <span class="menu-code">A001_300</span>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
+            </div>
         </div>
     </div>
     
