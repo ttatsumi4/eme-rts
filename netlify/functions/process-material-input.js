@@ -45,18 +45,14 @@ exports.handler = async function(event) {
     try {
         const { process_no, barcode, currentState } = JSON.parse(event.body);
         
-        // ★★★ 修正点: currentState.nextMaterialの存在をチェック ★★★
         if (!currentState || !currentState.nextMaterial) {
-            // もしnextMaterialがなければ、既に完了している可能性が高い
             const latestState = await getProcessState(process_no);
             if (latestState.isComplete) {
                 return { statusCode: 200, body: JSON.stringify({ success: true, newState: latestState }) };
             }
-            // それでもnextMaterialがなければ、何らかのデータ不整合エラー
             return { statusCode: 500, body: JSON.stringify({ success: false, message: '現在の工程状態を正しく取得できませんでした。', errorCode: 'STATE_ERROR' }) };
         }
         
-        // --- バーコード解析 ---
         const bcdData = barcode.split(';');
         if (bcdData.length <= 1) {
             return { statusCode: 200, body: JSON.stringify({ success: false, message: 'バーコード形式が不正です。', errorCode: 'BHT0013' }) };
@@ -65,24 +61,22 @@ exports.handler = async function(event) {
         const bcdRmId = bcdData[1]; 
         const bcdLotFull = bcdData[2];
 
-        // --- 検証 ---
         const nextMaterial = currentState.nextMaterial;
         
-        // 1. 原料チェック (両方のIDから空白を除去して比較)
         if (bcdType === 'RM' && bcdRmId.trim() !== nextMaterial.rmId.trim()) {
              return { statusCode: 200, body: JSON.stringify({ success: false, message: '指示と違う原料です。', errorCode: 'BHT0014' }) };
         }
 
-        // 2. 準備済みかチェック
+        // ★★★ 修正点: item.rm_lot_fullが存在するかチェック ★★★
         const targetItem = nextMaterial.preparedItems.find(item => {
-            return item.rm_lot_full.trim() === bcdLotFull.trim() && item.sikomi_flg !== '1';
+            // item.rm_lot_fullが存在し、かつtrim()した結果が一致するかを確認
+            return item.rm_lot_full && item.rm_lot_full.trim() === bcdLotFull.trim() && item.sikomi_flg !== '1';
         });
 
         if (!targetItem) {
             return { statusCode: 200, body: JSON.stringify({ success: false, message: '準備されていない、または投入済みの原料です。', errorCode: 'BHT0015/16' }) };
         }
         
-        // --- DB更新 ---
         const { error: updateError } = await supabase
             .from('rts_rm_rdy')
             .update({ sikomi_flg: '1', sikomi_date: new Date().toISOString() })
@@ -90,7 +84,6 @@ exports.handler = async function(event) {
         
         if (updateError) throw updateError;
         
-        // --- 更新後の新しい状態を返却 ---
         const newState = await getProcessState(process_no);
         return {
             statusCode: 200,
