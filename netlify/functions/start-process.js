@@ -8,11 +8,13 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 exports.handler = async function(event) {
     const { httpMethod, queryStringParameters, body } = event;
+    // --- ログ追加 ---
     console.log(`Function invoked with method: ${httpMethod}`);
 
     // --- GETリクエスト：画面初期表示用の情報を取得 ---
     if (httpMethod === 'GET') {
         const processNo = queryStringParameters.process_no;
+        // --- ログ追加 ---
         console.log(`GET request received for process_no: ${processNo}`);
 
         if (!processNo) {
@@ -21,13 +23,14 @@ exports.handler = async function(event) {
 
         try {
             // 1. 品名を取得
-            console.log('Step 1: Fetching product name from siji_rm_rdy_fin...');
+            console.log('Step 1: Fetching product name from siji_rm_r_fin...');
             const { data: instruction, error: instructionError } = await supabase
                 .from('siji_rm_rdy_fin')
                 .select('pow_hinmei')
                 .eq('rdy_siji_no', processNo)
                 .single();
             
+            // --- ログ追加 ---
             console.log('Instruction data:', instruction);
             console.error('Instruction error:', instructionError);
 
@@ -44,6 +47,7 @@ exports.handler = async function(event) {
                 .eq('pow_kotei_no', processNo)
                 .maybeSingle();
 
+            // --- ログ追加 ---
             console.log('Conditions data:', conditions);
             console.error('Conditions error:', conditionsError);
 
@@ -63,6 +67,7 @@ exports.handler = async function(event) {
             };
 
         } catch (error) {
+            // --- ログ追加 ---
             console.error('GET Error in catch block:', error);
             return { statusCode: 500, body: JSON.stringify({ success: false, message: 'データ取得エラー' }) };
         }
