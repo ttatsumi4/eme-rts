@@ -24,7 +24,11 @@ exports.handler = async function(event) {
                 .eq('rdy_siji_no', processNo)
                 .single();
 
-            if (instructionError) throw instructionError;
+            // instructionが見つからない場合のエラーハンドリングを追加
+            if (instructionError || !instruction) {
+                console.error('Instruction find error:', instructionError);
+                return { statusCode: 500, body: JSON.stringify({ success: false, message: '指示情報の取得に失敗しました。' }) };
+            }
 
             // 2. 既存の温度・湿度を取得
             const { data: conditions, error: conditionsError } = await supabase
@@ -46,6 +50,7 @@ exports.handler = async function(event) {
             };
 
         } catch (error) {
+            console.error('GET Error:', error);
             return { statusCode: 500, body: JSON.stringify({ success: false, message: 'データ取得エラー' }) };
         }
     }
@@ -72,13 +77,12 @@ exports.handler = async function(event) {
                         temperature: temperature,
                         humidity: humidity,
                         upd_user: employee_code,
-                        upd_date: new Date().toISOString(),
+                        // upd_dateはSupabaseの機能で自動更新される想定（要設定）
                     })
                     .eq('pow_kotei_no', process_no);
                 if (updateError) throw updateError;
             } else {
                 // データがなければ新規登録 (INSERT)
-                // 元のC#の複雑なINSERT...SELECTを簡略化し、主要な情報のみ登録
                 const { error: insertError } = await supabase
                     .from('rt_sikomi')
                     .insert({
@@ -86,7 +90,7 @@ exports.handler = async function(event) {
                         temperature: temperature,
                         humidity: humidity,
                         begin_time: new Date().toISOString(),
-                        cre_user: employee_code,
+                        // cre_userは存在しないため削除
                         upd_user: employee_code,
                     });
                 if (insertError) throw insertError;
