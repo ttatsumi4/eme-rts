@@ -45,7 +45,6 @@ exports.handler = async function(event) {
     try {
         const { process_no, barcode, currentState } = JSON.parse(event.body);
         
-        // --- ログ追加 ---
         console.log('Received data:', { process_no, barcode });
         
         // --- バーコード解析 ---
@@ -53,16 +52,16 @@ exports.handler = async function(event) {
         if (bcdData.length <= 1) {
             return { statusCode: 200, body: JSON.stringify({ success: false, message: 'バーコード形式が不正です。', errorCode: 'BHT0013' }) };
         }
-        const bcdType = bcdData[0]; // RM, RMH, RMM
-        const bcdRmId = bcdData[1].replace(/-/g, '');
+        const bcdType = bcdData[0];
+        // ★★★ 修正点: ハイフンを削除しないように変更 ★★★
+        const bcdRmId = bcdData[1]; 
         const bcdLotFull = bcdData[2];
 
         // --- 検証 ---
         const nextMaterial = currentState.nextMaterial;
         
-        // --- ログ追加：比較する値をコンソールに出力 ---
-        console.log(`Comparing Barcode RM ID: "${bcdRmId.trim()}" (length: ${bcdRmId.trim().length})`);
-        console.log(`Expected Next Material RM ID: "${nextMaterial.rmId.trim()}" (length: ${nextMaterial.rmId.trim().length})`);
+        console.log(`Comparing Barcode RM ID: "${bcdRmId.trim()}"`);
+        console.log(`Expected Next Material RM ID: "${nextMaterial.rmId.trim()}"`);
 
         // 1. 原料チェック (両方のIDから空白を除去して比較)
         if (bcdType === 'RM' && bcdRmId.trim() !== nextMaterial.rmId.trim()) {
