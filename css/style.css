@@ -1,3 +1,4 @@
+/* --- 共通スタイル --- */
 * {
     margin: 0;
     padding: 0;
@@ -13,7 +14,7 @@ body {
 }
 
 .container {
-    max-width: 1400px;
+    max-width: 900px;
     margin: 0 auto;
     padding: 20px;
     background: white;
@@ -27,42 +28,34 @@ body {
     text-align: center;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 40px 30px;
+    padding: 30px;
     border-radius: 12px;
     margin-bottom: 40px;
     box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
 }
 
 .header h1 {
-    font-size: 2.8rem;
-    font-weight: 300;
-    margin-bottom: 15px;
-}
-
-.header .subtitle {
-    font-size: 1.2rem;
-    opacity: 0.9;
+    font-size: 2.2rem;
     font-weight: 300;
 }
 
-/* 2列レイアウトから1列レイアウトに変更 */
+/* --- レイアウトを中央揃えの1カラムに変更 --- */
 .screen-mockup {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin: 40px 0;
-    align-items: start;
 }
 
-/* ターミナル画面が中央に来るように、また幅が広がりすぎないように調整 */
+/* --- ハンディターミナルの横幅を固定 --- */
 .device-frame {
     background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
     padding: 30px;
     border-radius: 20px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.3);
     position: relative;
-    max-width: 600px;
-    margin: 0 auto;
+    width: 100%;
+    max-width: 400px; /* 横幅を固定 */
 }
 
 .device-frame::before {
@@ -88,7 +81,7 @@ body {
     font-family: monospace;
     display: flex;
     flex-direction: column;
-    min-height: 450px;
+    min-height: 480px;
 }
 
 .screen-header {
@@ -97,7 +90,7 @@ body {
     padding: 12px 15px;
     text-align: center;
     font-weight: bold;
-    font-size: 0.9rem;
+    font-size: 1rem;
     border-bottom: 2px solid #0984e3;
 }
 
@@ -107,6 +100,18 @@ body {
     flex-grow: 1;
 }
 
+.screen-footer {
+    background: #e9ecef;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #495057;
+    text-align: center;
+    margin: 15px;
+    margin-top: auto;
+}
+
+/* --- メニュー項目スタイル --- */
 .menu-item {
     background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
     color: white;
@@ -141,82 +146,7 @@ body {
     background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
 }
 
-.screen-footer {
-    background: #e9ecef;
-    padding: 8px 12px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    color: #495057;
-    text-align: center;
-    margin: 15px;
-    margin-top: auto;
-}
-
-/* 削除されたため、以下のスタイルは不要ですが、念のため残しておきます */
+/* --- 右側の詳細パネルは不要なため非表示に --- */
 .details-panel {
-   display: none;
-}
-
-.details-panel h3 {
-    color: #2c3e50;
-    margin-bottom: 20px;
-    font-size: 1.6rem;
-    border-bottom: 3px solid #667eea;
-    padding-bottom: 10px;
-}
-
-.menu-details {
-    margin: 20px 0;
-}
-
-.menu-category {
-    background: white;
-    border-radius: 10px;
-    padding: 20px;
-    margin: 15px 0;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    border-left: 5px solid;
-}
-
-.menu-category.core {
-    border-left-color: #00b894;
-}
-
-.menu-category.support {
-    border-left-color: #a29bfe;
-}
-
-.menu-category.admin {
-    border-left-color: #fdcb6e;
-}
-
-.menu-category h4 {
-    color: #2c3e50;
-    margin-bottom: 12px;
-    font-size: 1.2rem;
-}
-
-.menu-list {
-    list-style: none;
-}
-
-.menu-list li {
-    padding: 8px 0;
-    border-bottom: 1px solid #eee;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.menu-list li:last-child {
-    border-bottom: none;
-}
-
-.menu-code {
-    background: #e9ecef;
-    color: #495057;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-family: monospace;
-    font-size: 0.85rem;
+    display: none;
 }
