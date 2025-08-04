@@ -67,8 +67,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (result.success) {
                 messageArea.className = 'success';
                 messageArea.textContent = 'チェックOK。次の画面へ進みます。';
-                // 実際のアプリケーションでは、ここで次の画面に遷移します
-                // window.location.href = `../next-screen/index.html?kotei_no=${processNo}`;
+                // 1秒後に新しい画面へ遷移
+                setTimeout(() => {
+                    window.location.href = `../shikomi-conditions/index.html?bht_id=${bhtId}&syain_cd=${employeeCode}&kotei_no=${processNo}`;
+                }, 1000);
             } else {
                 // サーバーから返されたエラーメッセージを表示
                 messageArea.className = 'error';
