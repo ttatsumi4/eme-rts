@@ -1,0 +1,120 @@
+// shikomi-input/script.js
+
+document.addEventListener('DOMContentLoaded', () => {
+    // --- 要素の取得 ---
+    const workerNameDisplay = document.getElementById('worker-name-display');
+    const processNoDisplay = document.getElementById('process-no-display');
+    const productNameDisplay = document.getElementById('product-name-display');
+    const progressText = document.getElementById('progress-text');
+    const messageArea = document.getElementById('message-area');
+    const materialDetails = document.getElementById('material-details');
+    const materialName = document.getElementById('material-name');
+    const barcodeInput = document.getElementById('barcode-input');
+    const backButton = document.getElementById('back-button');
+
+    // --- URLからパラメータを取得 ---
+    const params = new URLSearchParams(window.location.search);
+    const bhtId = params.get('bht_id');
+    const employeeCode = params.get('syain_cd');
+    const processNo = params.get('kotei_no');
+
+    // --- グローバル変数 ---
+    let currentProcessState = {};
+
+    // --- 画面初期化処理 ---
+    async function initialize() {
+        // 戻るボタンのURLを設定
+        backButton.onclick = () => {
+            window.location.href = `../shikomi-conditions/index.html?bht_id=${bhtId}&syain_cd=${employeeCode}&kotei_no=${processNo}`;
+        };
+
+        // 作業者名を取得して表示
+        if (employeeCode) {
+            try {
+                const res = await fetch(`/.netlify/functions/set-worker?get_name=true&employee_code=${employeeCode}`);
+                const result = await res.json();
+                workerNameDisplay.textContent = result.success ? result.employee_name : '取得失敗';
+            } catch {
+                workerNameDisplay.textContent = 'エラー';
+            }
+        }
+
+        // 工程の詳細情報をサーバーから取得してUIを更新
+        await fetchProcessDetails();
+    }
+
+    // --- UI更新関数 ---
+    function updateUI(state) {
+        currentProcessState = state; // 現在の状態を保存
+
+        processNoDisplay.textContent = state.processNo;
+        productNameDisplay.textContent = state.productName;
+        progressText.textContent = `${state.progressCurrent} / ${state.progressTotal}`;
+
+        if (state.isComplete) {
+            messageArea.textContent = '全ての原料の投入が完了しました。';
+            materialDetails.textContent = '完了';
+            materialName.textContent = '-';
+            barcodeInput.disabled = true;
+            // ここで完了画面へ遷移
+            // window.location.href = `../shikomi-complete/index.html?kotei_no=${processNo}`;
+        } else {
+            const next = state.nextMaterial;
+            materialDetails.textContent = `${next.seqNo}:${next.rmId} (${next.inCount}/${next.totalCount})`;
+            materialName.textContent = next.rmName;
+            barcodeInput.value = ''; // 入力欄をクリア
+            barcodeInput.focus(); // 再フォーカス
+        }
+    }
+
+    // --- 工程情報取得関数 ---
+    async function fetchProcessDetails() {
+        try {
+            const response = await fetch(`/.netlify/functions/get-process-details?process_no=${processNo}`);
+            const data = await response.json();
+            if (data.success) {
+                updateUI(data.state);
+            } else {
+                messageArea.textContent = data.message;
+            }
+        } catch (error) {
+            messageArea.textContent = '工程情報の取得に失敗しました。';
+        }
+    }
+
+    // --- バーコード入力イベント ---
+    barcodeInput.addEventListener('change', async (event) => {
+        const barcode = event.target.value.trim();
+        if (!barcode) return;
+
+        messageArea.textContent = '検証中...';
+
+        try {
+            const response = await fetch('/.netlify/functions/process-material-input', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    process_no: processNo,
+                    barcode: barcode,
+                    employee_code: employeeCode,
+                    currentState: currentProcessState // 現在の状態をサーバーに送る
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                messageArea.textContent = '投入成功';
+                updateUI(result.newState); // 新しい状態でUIを更新
+            } else {
+                messageArea.textContent = `エラー: ${result.message} (${result.errorCode})`;
+            }
+
+        } catch (error) {
+            messageArea.textContent = 'サーバーとの通信に失敗しました。';
+        }
+    });
+
+    // --- 初期化処理を実行 ---
+    initialize();
+});
