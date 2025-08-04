@@ -52,7 +52,7 @@ exports.handler = async function(event) {
         // --- 検証 ---
         const nextMaterial = currentState.nextMaterial;
         
-        // 1. 原料チェック
+        // 1. 原料チェック (★修正点)
         if (bcdType === 'RM' && bcdRmId.trim() !== nextMaterial.rmId.trim()) {
              return { statusCode: 200, body: JSON.stringify({ success: false, message: '指示と違う原料です。', errorCode: 'BHT0014' }) };
         }
