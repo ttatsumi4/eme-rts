@@ -1,0 +1,166 @@
+/* --- 共通スタイル（他画面から流用） --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    border-radius: 16px;
+}
+
+.header {
+    text-align: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 12px;
+    margin-bottom: 40px;
+}
+
+.header h1 {
+    font-size: 2.2rem;
+    font-weight: 300;
+}
+
+.screen-mockup {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.device-frame {
+    background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    width: 100%;
+    max-width: 400px;
+}
+
+.screen {
+    background: #f8f9fa;
+    border: 3px solid #2d3436;
+    border-radius: 8px;
+    font-family: monospace;
+    display: flex;
+    flex-direction: column;
+    min-height: 480px;
+}
+
+.screen-header {
+    /* ヘッダーの色を緑系に変更 */
+    background: linear-gradient(135deg, #2ecc71 0%, #28b463 100%);
+    color: white;
+    padding: 12px 15px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.screen-content {
+    padding: 25px 20px;
+    background: white;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.screen-footer {
+    background: #e9ecef;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #495057;
+    text-align: center;
+    margin: 15px;
+}
+
+/* --- このページ固有のスタイル --- */
+.screen-content label {
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: #333;
+    width: 100%;
+    text-align: left;
+    margin-bottom: 8px;
+}
+
+#process-barcode-input {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 1.2rem;
+    font-family: monospace;
+    border: 2px solid #ccc;
+    border-radius: 6px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+#process-barcode-input:focus {
+    outline: none;
+    border-color: #2ecc71; /* フォーカス色を緑系に */
+    box-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
+}
+
+.note {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 8px;
+    width: 100%;
+    text-align: left;
+}
+
+#back-button {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    color: white;
+    padding: 10px 25px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    text-decoration: none;
+    margin-top: auto; /* ボタンを一番下に配置 */
+}
+
+#back-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+}
+
+#message-area {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: bold;
+    min-height: 45px;
+}
+
+#message-area.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+#message-area.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}

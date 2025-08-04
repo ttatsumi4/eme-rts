@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>仕込み開始</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>仕込み開始画面</h1>
+            <div class="subtitle">EME_RTS_A001_100 - 工程入力</div>
+        </div>
+
+        <div class="screen-mockup">
+            <div class="device-frame">
+                <div class="screen">
+                    <div class="screen-header">
+                        仕込み
+                    </div>
+                    <div class="screen-content">
+                        <!-- メッセージ表示領域 -->
+                        <div id="message-area"></div>
+                        
+                        <!-- 工程番号入力 -->
+                        <label for="process-barcode-input">工程No.</label>
+                        <input type="text" id="process-barcode-input" placeholder="005xxxxxx" autofocus>
+                        <p class="note">※バーコード読み取り（自動フォーカス）</p>
+
+                        <!-- メニューに戻るボタン -->
+                        <a href="../index.html" id="back-button">メニュー</a>
+                    </div>
+                    <div class="screen-footer">
+                        作業者: <span id="worker-name-display">[読み込み中...]</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- スクリプトの読み込み -->
+    <script type="module" src="../js/supabase-client.js"></script>
+    <script type="module" src="./script.js"></script>
+</body>
+</html>
