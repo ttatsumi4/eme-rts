@@ -24,7 +24,6 @@ exports.handler = async function(event) {
                 .eq('rdy_siji_no', processNo)
                 .single();
 
-            // instructionが見つからない場合のエラーハンドリングを追加
             if (instructionError || !instruction) {
                 console.error('Instruction find error:', instructionError);
                 return { statusCode: 500, body: JSON.stringify({ success: false, message: '指示情報の取得に失敗しました。' }) };
@@ -77,7 +76,6 @@ exports.handler = async function(event) {
                         temperature: temperature,
                         humidity: humidity,
                         upd_user: employee_code,
-                        // upd_dateはSupabaseの機能で自動更新される想定（要設定）
                     })
                     .eq('pow_kotei_no', process_no);
                 if (updateError) throw updateError;
@@ -90,7 +88,7 @@ exports.handler = async function(event) {
                         temperature: temperature,
                         humidity: humidity,
                         begin_time: new Date().toISOString(),
-                        // cre_userは存在しないため削除
+                        cre_user: employee_code, // ★修正点：作成者も記録
                         upd_user: employee_code,
                     });
                 if (insertError) throw insertError;
