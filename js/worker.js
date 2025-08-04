@@ -24,10 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // バーコード入力欄のイベント処理
     barcodeInput.addEventListener('change', async (event) => {
         const barcode = event.target.value;
-        messageArea.textContent = ''; // メッセージをリセット
-        messageArea.className = '';
 
-        // 入力値の基本チェック (元のC#コードのロジックを再現)
+        // 入力値の基本チェック
         if (!barcode.startsWith('041') || barcode.length < 8) {
             messageArea.className = 'error';
             messageArea.textContent = '社員バーコードを正しく読み取れませんでした。';
@@ -37,34 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 社員番号を抽出
         const employeeCode = barcode.substring(3);
 
-        // Netlify Functionを呼び出す
-        try {
-            const response = await fetch('/.netlify/functions/set-worker', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    bht_id: bhtId,
-                    employee_code: employeeCode
-                })
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                messageArea.className = 'success';
-                messageArea.textContent = result.message;
-                // 成功したら2秒後にメインメニューに戻る
-                setTimeout(() => {
-                    window.location.href = `../index.html?bht_id=${bhtId}`;
-                }, 2000);
-            } else {
-                messageArea.className = 'error';
-                messageArea.textContent = result.message;
-            }
-
-        } catch (error) {
-            messageArea.className = 'error';
-            messageArea.textContent = 'サーバーとの通信に失敗しました。';
-        }
+        // ★変更点：DB更新はせず、確認画面に遷移する
+        window.location.href = `./confirm-worker.html?bht_id=${bhtId}&employee_code=${employeeCode}`;
     });
 });

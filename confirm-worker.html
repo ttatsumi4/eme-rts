@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作業者設定 - 確認</title>
+    <link rel="stylesheet" href="../css/confirm-worker.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>作業者設定画面</h1>
+            <div class="subtitle">EME_RTS_A001_310 - 設定確認</div>
+        </div>
+
+        <div class="screen-mockup">
+            <div class="device-frame">
+                <div class="screen">
+                    <div class="screen-header">
+                        作業者設定
+                    </div>
+                    <div class="screen-content">
+                        <div id="message-area"></div>
+
+                        <div id="confirm-details">
+                            <div class="detail-row">
+                                <span class="label">社員No.:</span>
+                                <span id="employee-code-display">[読み込み中...]</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="label">社員名:</span>
+                                <span id="employee-name-display">[読み込み中...]</span>
+                            </div>
+                        </div>
+
+                        <p id="confirm-question">設定しますか？</p>
+
+                        <div id="button-group">
+                            <button id="yes-button" class="btn-yes">はい</button>
+                            <button id="no-button" class="btn-no">いいえ</button>
+                            <button id="back-button" class="btn-back">戻る</button>
+                        </div>
+                    </div>
+                    <div class="screen-footer">
+                        BHT ID: <span id="bht-id-display">[読み込み中...]</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module" src="../js/supabase-client.js"></script>
+    <script type="module" src="../js/confirm-worker.js"></script>
+</body>
+</html>
