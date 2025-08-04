@@ -36,8 +36,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // 作業者未設定時
                 showMessage('作業者を設定して下さい。');
                 workerNameSpan.textContent = '[未設定]';
-                // 「作業者設定」メニューだけ表示するなどの制御も可能
-                document.querySelector('a[href*="A001_300"]').style.display = 'block';
+
+                // 「作業者設定」ボタンを見つけて表示する
+                const workerSetupButton = document.querySelector('a[data-url*="A001_300.html"]');
+                if (workerSetupButton) {
+                    // menu-containerは非表示のままなので、ボタンを直接bodyに追加する等の工夫が必要、
+                    // もしくは、menu-containerを表示して、他のボタンを非表示にする。
+                    // ここでは後者のシンプルな方法を採用します。
+
+                    document.getElementById('menu-container').style.display = 'block';
+                    document.querySelectorAll('#menu-container a').forEach(button => {
+                        if (button !== workerSetupButton) {
+                            button.style.display = 'none';
+                        }
+                    });
+                }
                 break;
 
             case 'locked':

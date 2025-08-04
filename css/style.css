@@ -45,20 +45,24 @@ body {
     font-weight: 300;
 }
 
+/* 2列レイアウトから1列レイアウトに変更 */
 .screen-mockup {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 40px;
     margin: 40px 0;
     align-items: start;
 }
 
+/* ターミナル画面が中央に来るように、また幅が広がりすぎないように調整 */
 .device-frame {
     background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
     padding: 30px;
     border-radius: 20px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.3);
     position: relative;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 .device-frame::before {
@@ -148,11 +152,9 @@ body {
     margin-top: auto;
 }
 
+/* 削除されたため、以下のスタイルは不要ですが、念のため残しておきます */
 .details-panel {
-    background: #f8f9fa;
-    border-radius: 12px;
-    padding: 30px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+   display: none;
 }
 
 .details-panel h3 {
