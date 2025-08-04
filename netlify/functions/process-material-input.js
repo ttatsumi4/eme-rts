@@ -13,7 +13,11 @@ async function getProcessState(processNo) {
     if (detailsError) throw detailsError;
     const { data: header, error: headerError } = await supabase.from('siji_rm_rdy_fin').select('pow_hinmei').eq('rdy_siji_no', processNo).single();
     if (headerError) throw headerError;
-    const { data: prepared, error: preparedError } = await supabase.from('rts_rm_rdy').select('*').eq('pow_kotei_no', processNo);
+    // 必要な列をすべて明記する
+    const { data: prepared, error: preparedError } = await supabase
+        .from('rts_rm_rdy')
+        .select('id, pow_kotei_no, sikomi_no, sikomi_flg, rm_id, rm_lot_full') // rm_lot_full を明示的に追加
+        .eq('pow_kotei_no', processNo);
     if (preparedError) throw preparedError;
     const totalSteps = details.length;
     
