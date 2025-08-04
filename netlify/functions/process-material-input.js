@@ -8,7 +8,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 // get-process-details.jsから同じ関数をインポート（実際は共通ファイルに置くのが望ましい）
 async function getProcessState(processNo) {
-    // (get-process-details.jsのgetProcessState関数と全く同じ内容をここにコピー)
+    // ★★★ この関数の中にもログは残してあります ★★★
     const { data: details, error: detailsError } = await supabase.from('siji_sikomi_detail_fin').select('rm_id, rm_name, seq_no').eq('pow_kotei_no', processNo).order('seq_no');
     if (detailsError) throw detailsError;
     const { data: header, error: headerError } = await supabase.from('siji_rm_rdy_fin').select('pow_hinmei').eq('rdy_siji_no', processNo).single();
@@ -16,12 +16,11 @@ async function getProcessState(processNo) {
     const { data: prepared, error: preparedError } = await supabase.from('rts_rm_rdy').select('*').eq('pow_kotei_no', processNo);
     if (preparedError) throw preparedError;
     const totalSteps = details.length;
-    // 投入済みフラグが'1'のものをカウント
+    
     const completedSteps = details.map(d => d.seq_no).filter(seq => {
         const items = prepared.filter(p => {
-            // ★★★ デバッグログ追加 ★★★
             console.log(`[DEBUG] Comparing for completed steps: prepared.sikomi_no=${p.sikomi_no}(${typeof p.sikomi_no}) vs instruction.seq_no=${seq}(${typeof seq})`);
-            return String(p.sikomi_no) === String(seq); // 修正案を適用
+            return String(p.sikomi_no) === String(seq);
         });
         return items.length > 0 && items.every(p => p.sikomi_flg === '1');
     }).length;
@@ -31,11 +30,9 @@ async function getProcessState(processNo) {
     const nextInstruction = details[currentStepIndex];
 
     const preparedForNext = prepared.filter(p => {
-        // ★★★ デバッグログ追加 ★★★
         console.log(`[DEBUG] Comparing for next material: prepared.sikomi_no=${p.sikomi_no}(${typeof p.sikomi_no}) vs nextInstruction.seq_no=${nextInstruction.seq_no}(${typeof nextInstruction.seq_no})`);
-        return String(p.sikomi_no) === String(nextInstruction.seq_no); // 修正案を適用
+        return String(p.sikomi_no) === String(nextInstruction.seq_no);
     });
-    // ★★★ デバッグログ追加 ★★★
     console.log('[DEBUG] Filtered preparedForNext:', preparedForNext);
     const totalCount = preparedForNext.length;
     const inCount = preparedForNext.filter(p => p.sikomi_flg === '1').length;
@@ -50,10 +47,8 @@ async function getProcessState(processNo) {
 
 
 exports.handler = async function(event) {
-    // ▼▼▼ ログ追加 ▼▼▼
     console.log('--- Function process-material-input started ---');
     console.log('Received event body:', event.body);
-    // ▲▲▲ ログ追加 ▲▲▲
 
     if (event.httpMethod !== 'POST') {
         return { statusCode: 405, body: 'Method Not Allowed' };
@@ -62,6 +57,7 @@ exports.handler = async function(event) {
         const { process_no, barcode, currentState } = JSON.parse(event.body);
         
         if (!currentState || !currentState.nextMaterial) {
+            console.log('[INFO] currentState or nextMaterial is missing. Refetching state from DB.');
             const latestState = await getProcessState(process_no);
             if (latestState.isComplete) {
                 return { statusCode: 200, body: JSON.stringify({ success: true, newState: latestState }) };
@@ -83,14 +79,25 @@ exports.handler = async function(event) {
              return { statusCode: 200, body: JSON.stringify({ success: false, message: '指示と違う原料です。', errorCode: 'BHT0014' }) };
         }
 
+        // ▼▼▼ ログ追加 ▼▼▼
+        console.log('[INFO] Searching for material with following data...');
+        console.log('[INFO] Barcode Lot Full:', bcdLotFull);
+        // JSON.stringifyでオブジェクトの中身を詳しく表示
+        console.log('[INFO] nextMaterial from currentState:', JSON.stringify(nextMaterial, null, 2));
+        // ▲▲▲ ログ追加 ▲▲▲
+
         const targetItem = nextMaterial.preparedItems.find(item => {
             return item.rm_lot_full && item.rm_lot_full.trim() === bcdLotFull.trim() && item.sikomi_flg !== '1';
         });
 
         if (!targetItem) {
+            // ▼▼▼ ログ追加 ▼▼▼
+            console.log('[ERROR] Target item not found in preparedItems. Returning error.');
+            // ▲▲▲ ログ追加 ▲▲▲
             return { statusCode: 200, body: JSON.stringify({ success: false, message: '準備されていない、または投入済みの原料です。', errorCode: 'BHT0015/16' }) };
         }
         
+        console.log('[INFO] Material found! Updating database...', targetItem);
         const { error: updateError } = await supabase
             .from('rts_rm_rdy')
             .update({ sikomi_flg: '1', sikomi_date: new Date().toISOString() })
@@ -98,6 +105,7 @@ exports.handler = async function(event) {
         
         if (updateError) throw updateError;
         
+        console.log('[INFO] Update successful. Fetching new state...');
         const newState = await getProcessState(process_no);
         return {
             statusCode: 200,
