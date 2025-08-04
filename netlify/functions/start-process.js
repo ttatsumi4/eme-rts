@@ -8,21 +8,28 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 exports.handler = async function(event) {
     const { httpMethod, queryStringParameters, body } = event;
+    console.log(`Function invoked with method: ${httpMethod}`);
 
     // --- GETリクエスト：画面初期表示用の情報を取得 ---
     if (httpMethod === 'GET') {
         const processNo = queryStringParameters.process_no;
+        console.log(`GET request received for process_no: ${processNo}`);
+
         if (!processNo) {
             return { statusCode: 400, body: JSON.stringify({ success: false, message: '工程No.がありません。' }) };
         }
 
         try {
             // 1. 品名を取得
+            console.log('Step 1: Fetching product name from siji_rm_rdy_fin...');
             const { data: instruction, error: instructionError } = await supabase
                 .from('siji_rm_rdy_fin')
-                .select('pow_hinmei') // C#コードのSelect_PowHinmeiを再現
+                .select('pow_hinmei')
                 .eq('rdy_siji_no', processNo)
                 .single();
+            
+            console.log('Instruction data:', instruction);
+            console.error('Instruction error:', instructionError);
 
             if (instructionError || !instruction) {
                 console.error('Instruction find error:', instructionError);
@@ -30,26 +37,33 @@ exports.handler = async function(event) {
             }
 
             // 2. 既存の温度・湿度を取得
+            console.log('Step 2: Fetching conditions from rt_sikomi...');
             const { data: conditions, error: conditionsError } = await supabase
                 .from('rt_sikomi')
                 .select('temperature, humidity')
                 .eq('pow_kotei_no', processNo)
-                .maybeSingle(); // データがない場合もあるためmaybeSingle
+                .maybeSingle();
+
+            console.log('Conditions data:', conditions);
+            console.error('Conditions error:', conditionsError);
 
             if (conditionsError) throw conditionsError;
 
+            const responseBody = {
+                success: true,
+                productName: instruction.pow_hinmei,
+                temperature: conditions ? conditions.temperature : null,
+                humidity: conditions ? conditions.humidity : null,
+            };
+            console.log('Step 3: Successfully returning data:', responseBody);
+
             return {
                 statusCode: 200,
-                body: JSON.stringify({
-                    success: true,
-                    productName: instruction.pow_hinmei,
-                    temperature: conditions ? conditions.temperature : null,
-                    humidity: conditions ? conditions.humidity : null,
-                }),
+                body: JSON.stringify(responseBody),
             };
 
         } catch (error) {
-            console.error('GET Error:', error);
+            console.error('GET Error in catch block:', error);
             return { statusCode: 500, body: JSON.stringify({ success: false, message: 'データ取得エラー' }) };
         }
     }
