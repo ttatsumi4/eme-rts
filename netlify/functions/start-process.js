@@ -88,7 +88,7 @@ exports.handler = async function(event) {
                         temperature: temperature,
                         humidity: humidity,
                         begin_time: new Date().toISOString(),
-                        cre_user: employee_code, // ★修正点：作成者も記録
+                        cre_user: employee_code,
                         upd_user: employee_code,
                     });
                 if (insertError) throw insertError;
