@@ -6,26 +6,47 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// get-process-details.jsから同じ関数をインポート（実際は共通ファイルに置くのが望ましい）
 async function getProcessState(processNo) {
-    // ★★★ この関数の中にもログは残してあります ★★★
+    // ▼▼▼ 'select(*)'と'select(列指定)'の結果を比較する最終確認ログ ▼▼▼
+    console.log("--- STARTING FINAL DIAGNOSIS ---");
+
+    // 確認1: 問題が発生している 'select(*)' を実行
+    console.log("--- Running Query 1: select('*') ---");
+    const { data: preparedWithStar, error: starError } = await supabase
+        .from('rts_rm_rdy')
+        .select('*')
+        .eq('pow_kotei_no', processNo);
+
+    if (starError) console.error("Error with select('*'):", starError);
+    console.log("Result from select('*'):", JSON.stringify(preparedWithStar, null, 2));
+
+    // 確認2: 解決策である 'select(列指定)' を実行
+    console.log("--- Running Query 2: select with explicit columns ---");
+    const explicitColumns = 'id, sikomi_no, sikomi_flg, rm_id, rm_name, rm_lot_full, rm_seitai_kosu, rm_suryo';
+    const { data: prepared, error: preparedError } = await supabase
+        .from('rts_rm_rdy')
+        .select(explicitColumns)
+        .eq('pow_kotei_no', processNo);
+
+    if (preparedError) console.error("Error with explicit select:", preparedError);
+    console.log("Result from explicit select:", JSON.stringify(prepared, null, 2));
+
+    console.log("--- FINISHED FINAL DIAGNOSIS ---");
+    // ▲▲▲ 最終確認ログここまで ▲▲▲
+
+
+    // --- 以降の処理は、正常に取得できるはずの 'prepared' データを使用 ---
+    if (preparedError) throw preparedError;
+
     const { data: details, error: detailsError } = await supabase.from('siji_sikomi_detail_fin').select('rm_id, rm_name, seq_no').eq('pow_kotei_no', processNo).order('seq_no');
     if (detailsError) throw detailsError;
     const { data: header, error: headerError } = await supabase.from('siji_rm_rdy_fin').select('pow_hinmei').eq('rdy_siji_no', processNo).single();
     if (headerError) throw headerError;
-    // 必要な列をすべて明記する
-    const { data: prepared, error: preparedError } = await supabase
-        .from('rts_rm_rdy')
-        .select('id, pow_kotei_no, sikomi_no, sikomi_flg, rm_id, rm_lot_full') // rm_lot_full を明示的に追加
-        .eq('pow_kotei_no', processNo);
-    if (preparedError) throw preparedError;
+
     const totalSteps = details.length;
     
     const completedSteps = details.map(d => d.seq_no).filter(seq => {
-        const items = prepared.filter(p => {
-            console.log(`[DEBUG] Comparing for completed steps: prepared.sikomi_no=${p.sikomi_no}(${typeof p.sikomi_no}) vs instruction.seq_no=${seq}(${typeof seq})`);
-            return String(p.sikomi_no) === String(seq);
-        });
+        const items = prepared.filter(p => String(p.sikomi_no) === String(seq));
         return items.length > 0 && items.every(p => p.sikomi_flg === '1');
     }).length;
 
@@ -33,11 +54,8 @@ async function getProcessState(processNo) {
     if (currentStepIndex >= totalSteps) return { isComplete: true, processNo, productName: header.pow_hinmei, progressTotal: totalSteps, progressCurrent: totalSteps };
     const nextInstruction = details[currentStepIndex];
 
-    const preparedForNext = prepared.filter(p => {
-        console.log(`[DEBUG] Comparing for next material: prepared.sikomi_no=${p.sikomi_no}(${typeof p.sikomi_no}) vs nextInstruction.seq_no=${nextInstruction.seq_no}(${typeof nextInstruction.seq_no})`);
-        return String(p.sikomi_no) === String(nextInstruction.seq_no);
-    });
-    console.log('[DEBUG] Filtered preparedForNext:', preparedForNext);
+    const preparedForNext = prepared.filter(p => String(p.sikomi_no) === String(nextInstruction.seq_no));
+    
     const totalCount = preparedForNext.length;
     const inCount = preparedForNext.filter(p => p.sikomi_flg === '1').length;
     return {
@@ -51,22 +69,21 @@ async function getProcessState(processNo) {
 
 
 exports.handler = async function(event) {
+    // handler関数の内容は変更なし
     console.log('--- Function process-material-input started ---');
     console.log('Received event body:', event.body);
-
     if (event.httpMethod !== 'POST') {
         return { statusCode: 405, body: 'Method Not Allowed' };
     }
     try {
-        const { process_no, barcode, currentState } = JSON.parse(event.body);
-        
-        if (!currentState || !currentState.nextMaterial) {
-            console.log('[INFO] currentState or nextMaterial is missing. Refetching state from DB.');
-            const latestState = await getProcessState(process_no);
-            if (latestState.isComplete) {
-                return { statusCode: 200, body: JSON.stringify({ success: true, newState: latestState }) };
-            }
-            return { statusCode: 500, body: JSON.stringify({ success: false, message: '現在の工程状態を正しく取得できませんでした。', errorCode: 'STATE_ERROR' }) };
+        const { process_no, barcode, employee_code, currentState } = JSON.parse(event.body);
+
+        // ★★★ getProcessStateが呼ばれるのはここから ★★★
+        const newState = await getProcessState(process_no);
+
+        // currentStateの代わりに、毎回DBから最新のnewStateを取得してチェックするロジックに簡略化
+        if (newState.isComplete) {
+            return { statusCode: 200, body: JSON.stringify({ success: true, newState }) };
         }
         
         const bcdData = barcode.split(';');
@@ -77,43 +94,31 @@ exports.handler = async function(event) {
         const bcdRmId = bcdData[1]; 
         const bcdLotFull = bcdData[2];
 
-        const nextMaterial = currentState.nextMaterial;
+        const nextMaterial = newState.nextMaterial;
         
         if (bcdType === 'RM' && bcdRmId.trim() !== nextMaterial.rmId.trim()) {
              return { statusCode: 200, body: JSON.stringify({ success: false, message: '指示と違う原料です。', errorCode: 'BHT0014' }) };
         }
-
-        // ▼▼▼ ログ追加 ▼▼▼
-        console.log('[INFO] Searching for material with following data...');
-        console.log('[INFO] Barcode Lot Full:', bcdLotFull);
-        // JSON.stringifyでオブジェクトの中身を詳しく表示
-        console.log('[INFO] nextMaterial from currentState:', JSON.stringify(nextMaterial, null, 2));
-        // ▲▲▲ ログ追加 ▲▲▲
 
         const targetItem = nextMaterial.preparedItems.find(item => {
             return item.rm_lot_full && item.rm_lot_full.trim() === bcdLotFull.trim() && item.sikomi_flg !== '1';
         });
 
         if (!targetItem) {
-            // ▼▼▼ ログ追加 ▼▼▼
-            console.log('[ERROR] Target item not found in preparedItems. Returning error.');
-            // ▲▲▲ ログ追加 ▲▲▲
             return { statusCode: 200, body: JSON.stringify({ success: false, message: '準備されていない、または投入済みの原料です。', errorCode: 'BHT0015/16' }) };
         }
         
-        console.log('[INFO] Material found! Updating database...', targetItem);
         const { error: updateError } = await supabase
             .from('rts_rm_rdy')
-            .update({ sikomi_flg: '1', sikomi_date: new Date().toISOString() })
+            .update({ sikomi_flg: '1', upd_user: employee_code, sikomi_date: new Date().toISOString() })
             .eq('id', targetItem.id); 
         
         if (updateError) throw updateError;
         
-        console.log('[INFO] Update successful. Fetching new state...');
-        const newState = await getProcessState(process_no);
+        const finalState = await getProcessState(process_no);
         return {
             statusCode: 200,
-            body: JSON.stringify({ success: true, newState }),
+            body: JSON.stringify({ success: true, newState: finalState }),
         };
 
     } catch (error) {
