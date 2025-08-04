@@ -45,6 +45,9 @@ exports.handler = async function(event) {
     try {
         const { process_no, barcode, currentState } = JSON.parse(event.body);
         
+        // --- ログ追加 ---
+        console.log('Received data:', { process_no, barcode });
+        
         // --- バーコード解析 ---
         const bcdData = barcode.split(';');
         if (bcdData.length <= 1) {
@@ -57,27 +60,41 @@ exports.handler = async function(event) {
         // --- 検証 ---
         const nextMaterial = currentState.nextMaterial;
         
-        // ★★★ 修正点 ★★★
+        // --- ログ追加：比較する値をコンソールに出力 ---
+        console.log(`Comparing Barcode RM ID: "${bcdRmId.trim()}" (length: ${bcdRmId.trim().length})`);
+        console.log(`Expected Next Material RM ID: "${nextMaterial.rmId.trim()}" (length: ${nextMaterial.rmId.trim().length})`);
+
         // 1. 原料チェック (両方のIDから空白を除去して比較)
         if (bcdType === 'RM' && bcdRmId.trim() !== nextMaterial.rmId.trim()) {
              return { statusCode: 200, body: JSON.stringify({ success: false, message: '指示と違う原料です。', errorCode: 'BHT0014' }) };
         }
 
         // 2. 準備済みかチェック
-        const targetItem = nextMaterial.preparedItems.find(item => item.rm_lot_full.trim() === bcdLotFull.trim() && item.sikomi_flg !== '1');
+        console.log(`Searching for Lot: "${bcdLotFull.trim()}"`);
+        const targetItem = nextMaterial.preparedItems.find(item => {
+            console.log(`Checking against prepared item lot: "${item.rm_lot_full.trim()}"`);
+            return item.rm_lot_full.trim() === bcdLotFull.trim() && item.sikomi_flg !== '1';
+        });
+
         if (!targetItem) {
+            console.error('Target item not found or already processed.');
             return { statusCode: 200, body: JSON.stringify({ success: false, message: '準備されていない、または投入済みの原料です。', errorCode: 'BHT0015/16' }) };
         }
+        
+        console.log('Target item found:', targetItem);
 
         // (ここに有効期限や品質チェックなど、元のC#コードの他の検証ロジックを追加)
 
         // --- DB更新 ---
+        console.log(`Updating rts_rm_rdy table for id: ${targetItem.id}`);
         const { error: updateError } = await supabase
             .from('rts_rm_rdy')
             .update({ sikomi_flg: '1', sikomi_date: new Date().toISOString() })
-            .eq('id', targetItem.id); // 主キーで更新
+            .eq('id', targetItem.id); 
         
         if (updateError) throw updateError;
+        
+        console.log('Update successful.');
 
         // --- 更新後の新しい状態を返却 ---
         const newState = await getProcessState(process_no);
