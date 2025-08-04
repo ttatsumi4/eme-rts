@@ -1,0 +1,172 @@
+/* --- 共通スタイル（メインメニューから流用） --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 900px; /* 少しコンパクトに */
+    margin: 0 auto;
+    padding: 20px;
+    background: white;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    border-radius: 16px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.header {
+    text-align: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 12px;
+    margin-bottom: 40px;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+}
+
+.header h1 {
+    font-size: 2.2rem;
+    font-weight: 300;
+}
+
+.screen-mockup {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.device-frame {
+    background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+}
+
+.screen {
+    background: #f8f9fa;
+    border: 3px solid #2d3436;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    font-family: monospace;
+    display: flex;
+    flex-direction: column;
+    min-height: 480px;
+}
+
+.screen-header {
+    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+    color: white;
+    padding: 12px 15px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1rem;
+    border-bottom: 2px solid #0984e3;
+}
+
+.screen-content {
+    padding: 25px 20px;
+    background: white;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.screen-footer {
+    background: #e9ecef;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #495057;
+    text-align: center;
+    margin: 15px;
+}
+
+/* --- このページ固有のスタイル --- */
+.screen-content label {
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: #333;
+    width: 100%;
+    text-align: left;
+    margin-bottom: 8px;
+}
+
+#employee-barcode-input {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 1.2rem;
+    font-family: monospace;
+    border: 2px solid #ccc;
+    border-radius: 6px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+#employee-barcode-input:focus {
+    outline: none;
+    border-color: #6c5ce7;
+    box-shadow: 0 0 10px rgba(108, 92, 231, 0.3);
+}
+
+.note {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 8px;
+    width: 100%;
+    text-align: left;
+}
+
+#back-button {
+    background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
+    color: white;
+    padding: 10px 25px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    text-decoration: none;
+    margin-top: auto; /* ボタンを一番下に配置 */
+}
+
+#back-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(232, 67, 147, 0.4);
+}
+
+#message-area {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: bold;
+    min-height: 45px; /* 高さを確保 */
+}
+
+#message-area.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+#message-area.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
