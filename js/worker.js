@@ -1,0 +1,70 @@
+// js/worker.js
+
+document.addEventListener('DOMContentLoaded', () => {
+    // 画面の要素を取得
+    const bhtIdDisplay = document.getElementById('bht-id-display');
+    const barcodeInput = document.getElementById('employee-barcode-input');
+    const messageArea = document.getElementById('message-area');
+    const backButton = document.getElementById('back-button');
+
+    // URLからBHT IDを取得
+    const params = new URLSearchParams(window.location.search);
+    const bhtId = params.get('bht_id');
+
+    // BHT IDを画面に表示し、戻るボタンのリンクにも設定
+    if (bhtId) {
+        bhtIdDisplay.textContent = bhtId;
+        backButton.href = `../index.html?bht_id=${bhtId}`;
+    } else {
+        bhtIdDisplay.textContent = '不明';
+        messageArea.className = 'error';
+        messageArea.textContent = 'BHT IDが指定されていません。';
+    }
+
+    // バーコード入力欄のイベント処理
+    barcodeInput.addEventListener('change', async (event) => {
+        const barcode = event.target.value;
+        messageArea.textContent = ''; // メッセージをリセット
+        messageArea.className = '';
+
+        // 入力値の基本チェック (元のC#コードのロジックを再現)
+        if (!barcode.startsWith('041') || barcode.length < 8) {
+            messageArea.className = 'error';
+            messageArea.textContent = '社員バーコードを正しく読み取れませんでした。';
+            return;
+        }
+
+        // 社員番号を抽出
+        const employeeCode = barcode.substring(3);
+
+        // Netlify Functionを呼び出す
+        try {
+            const response = await fetch('/.netlify/functions/set-worker', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    bht_id: bhtId,
+                    employee_code: employeeCode
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                messageArea.className = 'success';
+                messageArea.textContent = result.message;
+                // 成功したら2秒後にメインメニューに戻る
+                setTimeout(() => {
+                    window.location.href = `../index.html?bht_id=${bhtId}`;
+                }, 2000);
+            } else {
+                messageArea.className = 'error';
+                messageArea.textContent = result.message;
+            }
+
+        } catch (error) {
+            messageArea.className = 'error';
+            messageArea.textContent = 'サーバーとの通信に失敗しました。';
+        }
+    });
+});
