@@ -16,7 +16,12 @@ async function getProcessState(processNo) {
     const { data: prepared, error: preparedError } = await supabase.from('rts_rm_rdy').select('*').eq('pow_kotei_no', processNo);
     if (preparedError) throw preparedError;
     const totalSteps = details.length;
-    const completedSteps = prepared.filter(p => p.sikomi_flg === '1' && p.data_kbn === 'S').length; // 正袋のみでカウントするなど、仕様に合わせる
+    // 投入済みフラグが'1'のものをカウント
+    const completedSteps = details.map(d => d.seq_no).filter(seq => {
+        const items = prepared.filter(p => p.sikomi_no === seq);
+        return items.length > 0 && items.every(p => p.sikomi_flg === '1');
+    }).length;
+
     const currentStepIndex = completedSteps;
     if (currentStepIndex >= totalSteps) return { isComplete: true, processNo, productName: header.pow_hinmei, progressTotal: totalSteps, progressCurrent: totalSteps };
     const nextInstruction = details[currentStepIndex];
@@ -46,19 +51,20 @@ exports.handler = async function(event) {
             return { statusCode: 200, body: JSON.stringify({ success: false, message: 'バーコード形式が不正です。', errorCode: 'BHT0013' }) };
         }
         const bcdType = bcdData[0]; // RM, RMH, RMM
-        const bcdRmId = bcdData[1].replace(/-/g, '').padEnd(5).substring(0, 5);
+        const bcdRmId = bcdData[1].replace(/-/g, '');
         const bcdLotFull = bcdData[2];
 
         // --- 検証 ---
         const nextMaterial = currentState.nextMaterial;
         
-        // 1. 原料チェック (★修正点)
+        // ★★★ 修正点 ★★★
+        // 1. 原料チェック (両方のIDから空白を除去して比較)
         if (bcdType === 'RM' && bcdRmId.trim() !== nextMaterial.rmId.trim()) {
              return { statusCode: 200, body: JSON.stringify({ success: false, message: '指示と違う原料です。', errorCode: 'BHT0014' }) };
         }
 
         // 2. 準備済みかチェック
-        const targetItem = nextMaterial.preparedItems.find(item => item.rm_lot_full === bcdLotFull && item.sikomi_flg !== '1');
+        const targetItem = nextMaterial.preparedItems.find(item => item.rm_lot_full.trim() === bcdLotFull.trim() && item.sikomi_flg !== '1');
         if (!targetItem) {
             return { statusCode: 200, body: JSON.stringify({ success: false, message: '準備されていない、または投入済みの原料です。', errorCode: 'BHT0015/16' }) };
         }
