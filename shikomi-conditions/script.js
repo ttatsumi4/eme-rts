@@ -19,8 +19,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // --- 画面初期化処理 ---
     async function initialize() {
-        // 戻るボタンのURLを設定
-        backButton.href = `../shikomi-start/index.html?bht_id=${bhtId}&syain_cd=${employeeCode}`;
+        // ★修正点：戻るボタンのURLを設定
+        backButton.onclick = () => {
+            window.location.href = `../shikomi-start/index.html?bht_id=${bhtId}&syain_cd=${employeeCode}`;
+        };
         processNoDisplay.textContent = processNo;
 
         // 作業者名を取得して表示
