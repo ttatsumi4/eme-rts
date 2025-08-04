@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>仕込み投入</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>仕込み投入画面</h1>
+            <div class="subtitle">EME_RTS_A001_120 - 原料投入</div>
+        </div>
+
+        <div class="screen-mockup">
+            <div class="device-frame">
+                <div class="screen">
+                    <div class="screen-header">
+                        仕込み
+                    </div>
+                    <div class="screen-content">
+                        <!-- 上部情報エリア -->
+                        <div id="top-info">
+                            <p>工程No.：<span id="process-no-display">[...]</span></p>
+                            <p>品名：<span id="product-name-display">[...]</span></p>
+                        </div>
+
+                        <!-- 進捗表示 -->
+                        <div id="progress-container">
+                            投入進捗： <span id="progress-text">0/0</span>
+                        </div>
+
+                        <!-- メッセージ表示領域 -->
+                        <div id="message-area"></div>
+
+                        <!-- 原料情報 -->
+                        <div id="material-info">
+                            <p id="material-details">4:ABC01(2/3)</p>
+                            <p id="material-name">原料名称表示</p>
+                        </div>
+
+                        <!-- バーコード入力 -->
+                        <input type="text" id="barcode-input" placeholder="原料バーコード読み取り" autofocus>
+
+                        <!-- ボタン -->
+                        <div class="button-group">
+                            <button id="back-button" class="btn-back">戻る</button>
+                        </div>
+                    </div>
+                    <div class="screen-footer">
+                        作業者: <span id="worker-name-display">[読み込み中...]</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module" src="../js/supabase-client.js"></script>
+    <script type="module" src="./script.js"></script>
+</body>
+</html>

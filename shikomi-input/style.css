@@ -1,0 +1,90 @@
+/* --- 共通スタイル --- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', sans-serif; line-height: 1.6; color: #333; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+.container { max-width: 900px; margin: 20px auto; padding: 20px; background: white; box-shadow: 0 20px 60px rgba(0,0,0,0.15); border-radius: 16px; }
+.header { text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 12px; margin-bottom: 40px; }
+.header h1 { font-size: 2.2rem; font-weight: 300; }
+.screen-mockup { display: flex; justify-content: center; align-items: center; }
+.device-frame { background: linear-gradient(135deg, #2d3436 0%, #636e72 100%); padding: 30px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); width: 100%; max-width: 400px; }
+.screen { background: #f8f9fa; border: 3px solid #2d3436; border-radius: 8px; font-family: monospace; display: flex; flex-direction: column; min-height: 520px; }
+.screen-header { background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; padding: 12px 15px; text-align: center; font-weight: bold; font-size: 1rem; }
+.screen-content { padding: 15px; background: white; flex-grow: 1; display: flex; flex-direction: column; }
+.screen-footer { background: #e9ecef; padding: 8px 12px; border-radius: 4px; font-size: 0.8rem; color: #495057; text-align: center; margin: 15px; }
+
+/* --- このページ固有のスタイル --- */
+#top-info {
+    background-color: #e9f7ff;
+    border: 1px solid #bde0fe;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+}
+#progress-container {
+    background-color: #e8f5e9;
+    border: 1px solid #c8e6c9;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+}
+#message-area {
+    background-color: #fff3cd;
+    border: 1px solid #ffeeba;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    text-align: center;
+    min-height: 40px;
+}
+#material-info {
+    background-color: #fff3e0;
+    border: 1px solid #ffecb3;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+#material-details {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #e67e22;
+}
+#material-name {
+    font-size: 0.9rem;
+    color: #333;
+}
+
+#barcode-input {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    border: 2px solid #bdc3c7;
+    border-radius: 6px;
+    text-align: center;
+    margin-bottom: 15px;
+}
+#barcode-input:focus {
+    outline: none;
+    border-color: #9b59b6;
+}
+
+.button-group {
+    margin-top: auto;
+    text-align: center;
+}
+.btn-back {
+    background-color: #3498db;
+    color: white;
+    padding: 10px 30px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    font-size: 1rem;
+}
+.btn-back:hover {
+    background-color: #2980b9;
+}
