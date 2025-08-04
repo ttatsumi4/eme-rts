@@ -18,14 +18,25 @@ async function getProcessState(processNo) {
     const totalSteps = details.length;
     // 投入済みフラグが'1'のものをカウント
     const completedSteps = details.map(d => d.seq_no).filter(seq => {
-        const items = prepared.filter(p => p.sikomi_no === seq);
+        const items = prepared.filter(p => {
+            // ★★★ デバッグログ追加 ★★★
+            console.log(`[DEBUG] Comparing for completed steps: prepared.sikomi_no=${p.sikomi_no}(${typeof p.sikomi_no}) vs instruction.seq_no=${seq}(${typeof seq})`);
+            return String(p.sikomi_no) === String(seq); // 修正案を適用
+        });
         return items.length > 0 && items.every(p => p.sikomi_flg === '1');
     }).length;
 
     const currentStepIndex = completedSteps;
     if (currentStepIndex >= totalSteps) return { isComplete: true, processNo, productName: header.pow_hinmei, progressTotal: totalSteps, progressCurrent: totalSteps };
     const nextInstruction = details[currentStepIndex];
-    const preparedForNext = prepared.filter(p => p.sikomi_no === nextInstruction.seq_no);
+
+    const preparedForNext = prepared.filter(p => {
+        // ★★★ デバッグログ追加 ★★★
+        console.log(`[DEBUG] Comparing for next material: prepared.sikomi_no=${p.sikomi_no}(${typeof p.sikomi_no}) vs nextInstruction.seq_no=${nextInstruction.seq_no}(${typeof nextInstruction.seq_no})`);
+        return String(p.sikomi_no) === String(nextInstruction.seq_no); // 修正案を適用
+    });
+    // ★★★ デバッグログ追加 ★★★
+    console.log('[DEBUG] Filtered preparedForNext:', preparedForNext);
     const totalCount = preparedForNext.length;
     const inCount = preparedForNext.filter(p => p.sikomi_flg === '1').length;
     return {
