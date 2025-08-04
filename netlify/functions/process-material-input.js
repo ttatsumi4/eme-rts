@@ -50,6 +50,11 @@ async function getProcessState(processNo) {
 
 
 exports.handler = async function(event) {
+    // ▼▼▼ ログ追加 ▼▼▼
+    console.log('--- Function process-material-input started ---');
+    console.log('Received event body:', event.body);
+    // ▲▲▲ ログ追加 ▲▲▲
+
     if (event.httpMethod !== 'POST') {
         return { statusCode: 405, body: 'Method Not Allowed' };
     }
@@ -78,9 +83,7 @@ exports.handler = async function(event) {
              return { statusCode: 200, body: JSON.stringify({ success: false, message: '指示と違う原料です。', errorCode: 'BHT0014' }) };
         }
 
-        // ★★★ 修正点: item.rm_lot_fullが存在するかチェック ★★★
         const targetItem = nextMaterial.preparedItems.find(item => {
-            // item.rm_lot_fullが存在し、かつtrim()した結果が一致するかを確認
             return item.rm_lot_full && item.rm_lot_full.trim() === bcdLotFull.trim() && item.sikomi_flg !== '1';
         });
 
