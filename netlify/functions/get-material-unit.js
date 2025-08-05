@@ -15,11 +15,11 @@ exports.handler = async function(event) {
 
     try {
         const { data, error } = await supabase
-            .from('RM_LOT_KANRI')
+            .from('rm_lot_kanri') // <-- 小文字に修正
             .select('suryo_tani')
             .eq('lot_full', lot_full)
             .single();
-
+            
         if (error) {
             throw error;
         }
