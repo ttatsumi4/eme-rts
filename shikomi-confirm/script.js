@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const processNo = params.get('kotei_no');
     const barcode = decodeURIComponent(params.get('barcode'));
 
-    // --- ▼▼▼ 初期化処理（修正）▼▼▼ ---
+    // --- 初期化処理（修正）▼▼▼ ---
     // --- 初期化処理（修正）▼▼▼ ---
     async function initialize() {
         backButton.onclick = () => {
@@ -42,15 +42,17 @@ document.addEventListener('DOMContentLoaded', () => {
         // バーコード情報を解析して表示
         if (barcode) {
             const parts = barcode.split(';');
-            if(parts.length > 5) {
+            
+            // ★★★ 条件式を修正 (> 5 から >= 4 へ) ★★★
+            if (parts.length >= 4) {
                 const lotFull = parts[2];
                 const expiryDate = parts[3];
-                const weight = parts[5];
+                // 重量(parts[5])が存在するかをチェック
+                const weight = parts.length > 5 ? parts[5] : '---';
 
                 lotDisplay.textContent = `LOT: ${lotFull}`;
                 expiryDisplay.textContent = `期限: ${expiryDate}`;
                 
-                // ★★★ ここから単位取得処理を追加 ★★★
                 try {
                     const res = await fetch(`/.netlify/functions/get-material-unit?lot_full=${lotFull}`);
                     const result = await res.json();
@@ -60,11 +62,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.error('Failed to fetch unit', err);
                     weightDisplay.textContent = `重量: ${weight}`; // 単位取得失敗時は単位なしで表示
                 }
-                // ★★★ ここまで ★★★
             }
         }
     }
-
+    
     // --- 確定ボタンのクリックイベント（変更なし） ---
     confirmButton.addEventListener('click', async () => {
         messageArea.textContent = '処理中...';
