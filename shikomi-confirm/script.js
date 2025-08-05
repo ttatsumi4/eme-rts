@@ -65,22 +65,34 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
-    
-    // --- 確定ボタンのクリックイベント（変更なし） ---
+
+    // --- 確定ボタンのクリックイベント（最終確認ログを追加） ---
     confirmButton.addEventListener('click', async () => {
         messageArea.textContent = '処理中...';
         confirmButton.disabled = true;
+
+        // ▼▼▼ ここから最終確認ログ ▼▼▼
+        const payload = {
+            process_no: processNo,
+            barcode: barcode,
+            employee_code: employeeCode
+        };
+
+        console.log("--- Sending data to server ---");
+        console.log("Process No:", payload.process_no);
+        console.log("Barcode:", payload.barcode);
+        console.log("Employee Code:", payload.employee_code);
+        console.log("Full Payload:", JSON.stringify(payload));
+        // ▲▲▲ ここまで最終確認ログ ▲▲▲
 
         try {
             const response = await fetch('/netlify/functions/process-material-input', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    process_no: processNo,
-                    barcode: barcode,
-                    employee_code: employeeCode
-                })
+                body: JSON.stringify(payload) // 送信するデータをpayload変数に変更
             });
+
+            // ... (以降の処理は変更なし) ...
 
             const result = await response.json();
 
