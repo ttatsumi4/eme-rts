@@ -4,16 +4,38 @@ body {
     font-family: 'Segoe UI', sans-serif;
     line-height: 1.6;
     color: #333;
-    background: linear-gradient(180deg, #b8b8f5 0%, #e2e2f8 100%); /* 紫色のグラデーションを追加 */
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px; /* 周囲に余白を追加 */
+    background: #f4f7f6; /* 背景はシンプルな色に */
 }
-.container { max-width: 900px; width: 100%; margin: 20px auto; }
-.header { text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
-.header h1 { font-size: 2rem; font-weight: 300; }
+
+/* ▼▼▼ ここから全面的に修正 ▼▼▼ */
+
+/* ページ全体のヘッダー */
+.page-header {
+    text-align: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px 20px;
+    width: 100%;
+}
+.page-header h1 {
+    font-size: 2.2rem;
+    font-weight: 300;
+}
+
+/* 白いコンテナエリア */
+.container {
+    max-width: 1000px;
+    width: 100%;
+    margin: -30px auto 20px auto; /* ヘッダーに少し重なるようにネガティブマージンを設定 */
+    padding: 40px;
+    background: white;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border-radius: 16px;
+    position: relative; /* z-indexを有効にするため */
+    z-index: 10;
+}
+
+/* ハンディターミナル部分のスタイル (変更なし) */
 .screen-mockup { display: flex; justify-content: center; align-items: center; }
 .device-frame { background: linear-gradient(135deg, #2d3436 0%, #636e72 100%); padding: 30px; border-radius: 40px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); width: 100%; max-width: 420px; }
 .screen { background: #f8f9fa; border: 3px solid #2d3436; border-radius: 8px; font-family: monospace; display: flex; flex-direction: column; min-height: 550px; }
@@ -21,7 +43,7 @@ body {
 .screen-content { padding: 15px; background: white; flex-grow: 1; display: flex; flex-direction: column; }
 .screen-footer { background: #e9ecef; padding: 8px 12px; border-radius: 4px; font-size: 0.8rem; color: #495057; text-align: center; margin: 15px; }
 
-/* --- ▼▼▼ ここから修正・追加 (内容は以前と同じ) ▼▼▼ --- */
+/* ハンディ画面内の各パーツのスタイル */
 #top-info {
     background-color: #e9f7ff;
     border: 1px solid #bde0fe;
@@ -41,6 +63,7 @@ body {
     font-size: 0.8rem;
     color: #666;
     margin-bottom: 5px;
+    text-align: left;
 }
 #material-details {
     font-size: 1.1rem;
@@ -52,6 +75,8 @@ body {
     color: #333;
     margin-left: 10px;
 }
+#barcode-info p { text-align: left; }
+
 
 #message-area {
     background-color: #fff3cd;
@@ -69,8 +94,6 @@ body {
     text-align: center;
     padding-top: 15px;
 }
-
-/* 汎用ボタンスタイル */
 .btn-confirm, .btn-back {
     padding: 10px 30px;
     border-radius: 6px;
@@ -81,23 +104,17 @@ body {
     margin: 0 5px;
     transition: background-color 0.2s;
 }
-
-/* 確定ボタンスタイル */
 .btn-confirm {
     background-color: #ecf0f1;
     color: #2c3e50;
     border: 1px solid #bdc3c7;
 }
-.btn-confirm:hover {
-    background-color: #dbe0e2;
-}
+.btn-confirm:hover { background-color: #dbe0e2; }
 
-/* 戻るボタンスタイル */
 .btn-back {
     background-color: #3498db;
     color: white;
 }
-.btn-back:hover {
-    background-color: #2980b9;
-}
-/* --- ▲▲▲ ここまで修正・追加 ▲▲▲ --- */
+.btn-back:hover { background-color: #2980b9; }
+
+/* ▲▲▲ ここまで全面的に修正 ▲▲▲ */
