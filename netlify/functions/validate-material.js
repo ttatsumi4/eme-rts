@@ -28,10 +28,10 @@ exports.handler = async function(event) {
         
         // 原料マスターを検索して、原料グループ（溶剤かどうか）を判断
         const { data, error } = await supabase
-            .from('MST_SIJI_RAW_MATERIAL')
-            .select('rm_group')
-            .eq('rm_id', bcdRmId)
-            .single();
+                .from('mst_siji_raw_material') // <-- 小文字に修正
+                .select('rm_group')
+                .eq('rm_id', bcdRmId)
+                .single();
 
         if (error || !data) {
             throw new Error('原料マスターの検索に失敗しました。');
