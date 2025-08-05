@@ -100,41 +100,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- バーコード入力イベント ---
-    barcodeInput.addEventListener('change', async (event) => {
-        const barcode = event.target.value.trim();
-        if (!barcode) return;
+    barcodeInput.addEventListener('change', (event) => {
+    const barcode = event.target.value.trim();
+    if (!barcode) return;
 
-        messageArea.textContent = '検証中...';
-        console.log('Barcode entered:', barcode);
-
-        try {
-            console.log('Posting to process-material-input...');
-            const response = await fetch('/.netlify/functions/process-material-input', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    process_no: processNo,
-                    barcode: barcode,
-                    employee_code: employeeCode,
-                    currentState: currentProcessState // 現在の状態をサーバーに送る
-                })
-            });
-            console.log('Process material response status:', response.status);
-
-            const result = await response.json();
-            console.log('Process material data:', result);
-
-            if (result.success) {
-                messageArea.textContent = '投入成功';
-                updateUI(result.newState); // 新しい状態でUIを更新
-            } else {
-                messageArea.textContent = `エラー: ${result.message} (${result.errorCode})`;
-            }
-
-        } catch (error) {
-            console.error('Failed to process material input:', error);
-            messageArea.textContent = 'サーバーとの通信に失敗しました。';
-        }
+    // バーコード情報をURLパラメータとして渡し、確認画面へ遷移する
+    console.log('Redirecting to confirmation page with barcode:', barcode);
+    window.location.href = `../shikomi-confirm/index.html?bht_id=${bhtId}&syain_cd=${employeeCode}&kotei_no=${processNo}&barcode=${encodeURIComponent(barcode)}`;
     });
 
     // --- 初期化処理を実行 ---
