@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Confirmation page loaded.');
 
-    // --- 要素の取得 ---
+    // --- ▼▼▼ 要素の取得（追加）▼▼▼ ---
     const processNoDisplay = document.getElementById('process-no-display');
     const productNameDisplay = document.getElementById('product-name-display');
     const materialDetails = document.getElementById('material-details');
@@ -21,15 +21,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const processNo = params.get('kotei_no');
     const barcode = decodeURIComponent(params.get('barcode'));
 
-    // --- 初期化処理 ---
+    // --- ▼▼▼ 初期化処理（修正）▼▼▼ ---
+    // --- 初期化処理（修正）▼▼▼ ---
     async function initialize() {
-        // 戻るボタンの行き先を設定
         backButton.onclick = () => {
             window.location.href = `../shikomi-input/index.html?bht_id=${bhtId}&syain_cd=${employeeCode}&kotei_no=${processNo}`;
         };
 
-        // 作業者名と工程情報を取得 (入力画面と同様)
-        // (この部分は共通関数化するとより良くなります)
         fetchWorkerName();
         const details = await fetchProcessDetails();
         
@@ -45,14 +43,29 @@ document.addEventListener('DOMContentLoaded', () => {
         if (barcode) {
             const parts = barcode.split(';');
             if(parts.length > 5) {
-                lotDisplay.textContent = `LOT: ${parts[2]}`;
-                expiryDisplay.textContent = `期限: ${parts[3]}`;
-                weightDisplay.textContent = `重量: ${parts[5]} kg`;
+                const lotFull = parts[2];
+                const expiryDate = parts[3];
+                const weight = parts[5];
+
+                lotDisplay.textContent = `LOT: ${lotFull}`;
+                expiryDisplay.textContent = `期限: ${expiryDate}`;
+                
+                // ★★★ ここから単位取得処理を追加 ★★★
+                try {
+                    const res = await fetch(`/.netlify/functions/get-material-unit?lot_full=${lotFull}`);
+                    const result = await res.json();
+                    const unit = result.success ? result.unit : '';
+                    weightDisplay.textContent = `重量: ${weight} ${unit}`;
+                } catch (err) {
+                    console.error('Failed to fetch unit', err);
+                    weightDisplay.textContent = `重量: ${weight}`; // 単位取得失敗時は単位なしで表示
+                }
+                // ★★★ ここまで ★★★
             }
         }
     }
 
-    // --- 確定ボタンのクリックイベント ---
+    // --- 確定ボタンのクリックイベント（変更なし） ---
     confirmButton.addEventListener('click', async () => {
         messageArea.textContent = '処理中...';
         confirmButton.disabled = true;
@@ -72,7 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (result.success) {
                 messageArea.textContent = '投入処理完了。次の画面へ遷移します...';
-                // 成功したら入力画面に戻る
                 setTimeout(() => {
                     window.location.href = `../shikomi-input/index.html?bht_id=${bhtId}&syain_cd=${employeeCode}&kotei_no=${processNo}`;
                 }, 1500);
@@ -87,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // --- 共通の関数群 (入力画面のスクリプトからコピー) ---
+    // --- 共通の関数群（変更なし） ---
     async function fetchWorkerName() {
         if (!employeeCode) return;
         try {
