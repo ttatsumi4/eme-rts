@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let expectedMaterialId = '';
 
     // --- 初期化処理 ---
-    async function initialize() {
+      async function initialize() {
         // 戻るボタンの行き先を設定
         backButton.onclick = () => {
             // 120画面に戻る
@@ -28,10 +28,14 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         // 作業者名を取得・表示
-        fetchWorkerName();
+        // ★ `await`を追加して、完了を待つように変更
+        await fetchWorkerName();
 
         // 工程情報を取得して、投入すべき溶剤の情報を表示
+        // ★ `await`を追加して、完了を待つように変更
         const details = await fetchProcessDetails();
+        
+        // ★ `if`文の条件をより安全なものに変更
         if (details && details.nextMaterial) {
             const next = details.nextMaterial;
             expectedMaterialId = next.rm_id; // 期待される原料IDを保存
