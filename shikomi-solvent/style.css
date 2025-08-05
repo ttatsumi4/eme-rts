@@ -22,18 +22,9 @@ body {
     font-weight: 300;
 }
 
-/* 白いコンテナエリア */
-.container {
-    max-width: 1000px;
-    width: 100%;
-    margin: -30px auto 20px auto;
-    padding: 40px;
-    background: white;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    border-radius: 16px;
-    position: relative;
-    z-index: 10;
-}
+.container { max-width: 900px; margin: 20px auto; padding: 20px; background: white; box-shadow: 0 20px 60px rgba(0,0,0,0.15); border-radius: 16px; }
+.header { text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 12px; margin-bottom: 40px; }
+.header h1 { font-size: 2.2rem; font-weight: 300; }
 
 /* ハンディターミナル部分のスタイル */
 .screen-mockup { display: flex; justify-content: center; align-items: center; }
