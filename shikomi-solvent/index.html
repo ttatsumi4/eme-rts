@@ -3,53 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>仕込み投入確認</title>
+    <title>溶剤缶確認</title>
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>仕込み投入画面</h1>
-            <div class="subtitle">EME_RTS_A001_125 - 溶剤缶確認</div>
-        </div>
+    <header class="page-header">
+        <h1>仕込み投入画面</h1>
+        <div class="subtitle">EME_RTS_A001_125 - 溶剤缶確認</div>
+    </header>
 
-        <div class="screen-mockup">
+    <div class="container">
+        <main class="screen-mockup">
             <div class="device-frame">
                 <div class="screen">
                     <div class="screen-header red">仕込み</div>
                     <div class="screen-content">
-                        
                         <div id="material-info" class="orange-box">
                             <p>仕込原料</p>
                             <p id="material-display">ABC01：溶剤原料名称</p>
                         </div>
-
                         <div id="message-area" class="yellow-box">
                             メッセージ表示領域
                         </div>
-
                         <div id="instruction-area" class="green-box">
                             溶剤缶をスキャン<br>して下さい。
                         </div>
-
                         <div id="barcode-container" class="red-border-box">
                             <input type="text" id="barcode-input" placeholder="溶剤缶バーコード読み取り" autofocus>
-                            <small>※バーコード読み取り必須（先頭「|」確認）</small>
                         </div>
-
                         <div id="error-message-area"></div>
-
                         <div class="button-group">
                             <button id="next-button" class="btn-next" style="display: none;">続ける</button>
                             <button id="back-button" class="btn-back">戻る</button>
                         </div>
-                        </div>
+                    </div>
                     <div class="screen-footer">
-                        作業者: <span id="worker-name-display">[...]</span>
+                        作業者: <span id="worker-name-display">[社員名表示]</span>
                     </div>
                 </div>
             </div>
-        </div>
+        </main>
     </div>
     <script type="module" src="./script.js"></script>
 </body>
