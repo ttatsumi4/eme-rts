@@ -100,13 +100,49 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- バーコード入力イベント ---
-    barcodeInput.addEventListener('change', (event) => {
-    const barcode = event.target.value.trim();
-    if (!barcode) return;
+        barcodeInput.addEventListener('change', async (event) => {
+        const barcode = event.target.value.trim();
+        if (!barcode) return;
 
-    // バーコード情報をURLパラメータとして渡し、確認画面へ遷移する
-    console.log('Redirecting to confirmation page with barcode:', barcode);
-    window.location.href = `../shikomi-confirm/index.html?bht_id=${bhtId}&syain_cd=${employeeCode}&kotei_no=${processNo}&barcode=${encodeURIComponent(barcode)}`;
+        messageArea.textContent = '検証中...';
+        barcodeInput.disabled = true;
+
+        try {
+            // 新しく作成した検証関数を呼び出す
+            const response = await fetch('/.netlify/functions/validate-material', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    barcode: barcode,
+                    next_rm_id: currentProcessState.nextMaterial.rmId // 現在の工程で指示されている原料ID
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                // サーバーからの応答に応じて遷移先を決定
+                if (result.next_screen === 'solvent') {
+                    // 溶剤画面へ
+                    console.log('Redirecting to SOLVENT page...');
+                    window.location.href = `../shikomi-solvent/index.html?bht_id=${bhtId}&syain_cd=${employeeCode}&kotei_no=${processNo}&barcode=${encodeURIComponent(barcode)}`;
+                } else {
+                    // 通常の確認画面へ
+                    console.log('Redirecting to CONFIRM page...');
+                    window.location.href = `../shikomi-confirm/index.html?bht_id=${bhtId}&syain_cd=${employeeCode}&kotei_no=${processNo}&barcode=${encodeURIComponent(barcode)}`;
+                }
+            } else {
+                // 検証でエラーが返ってきた場合
+                messageArea.textContent = `エラー: ${result.message}`;
+                barcodeInput.disabled = false;
+                barcodeInput.value = '';
+                barcodeInput.focus();
+            }
+        } catch (error) {
+            console.error('Failed to validate barcode:', error);
+            messageArea.textContent = 'サーバーとの通信に失敗しました。';
+            barcodeInput.disabled = false;
+        }
     });
 
     // --- 初期化処理を実行 ---
