@@ -1,86 +1,91 @@
-/* --- 共通スタイル --- */
+/* --- 共通スタイル（外枠など）--- */
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Segoe UI', sans-serif; line-height: 1.6; color: #333; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
-.container { max-width: 900px; margin: 20px auto; padding: 20px; background: white; box-shadow: 0 20px 60px rgba(0,0,0,0.15); border-radius: 16px; }
-.header { text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 12px; margin-bottom: 40px; }
+body { 
+    font-family: 'Segoe UI', sans-serif; 
+    line-height: 1.6; 
+    color: #333; 
+    background: #f4f7f6;
+}
+.container { 
+    max-width: 1000px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0;
+}
+.header { 
+    text-align: center; 
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+    color: white; padding: 30px 20px; 
+}
 .header h1 { font-size: 2.2rem; font-weight: 300; }
-.screen-mockup { display: flex; justify-content: center; align-items: center; }
-.device-frame { background: linear-gradient(135deg, #2d3436 0%, #636e72 100%); padding: 30px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); width: 100%; max-width: 400px; }
-.screen { background: #f8f9fa; border: 3px solid #2d3436; border-radius: 8px; font-family: monospace; display: flex; flex-direction: column; min-height: 520px; }
+.screen-mockup { 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    background: white;
+    max-width: 1000px;
+    margin: -30px auto 20px auto;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    position: relative;
+    z-index: 10;
+}
+.device-frame { 
+    background: linear-gradient(135deg, #2d3436 0%, #636e72 100%); 
+    padding: 30px; 
+    border-radius: 40px; 
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3); 
+    width: 100%; max-width: 420px; 
+}
+.screen { background: #f8f9fa; border: 3px solid #2d3636; border-radius: 8px; font-family: monospace; display: flex; flex-direction: column; min-height: 550px; }
 .screen-header { background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; padding: 12px 15px; text-align: center; font-weight: bold; font-size: 1rem; }
-.screen-content { padding: 15px; background: white; flex-grow: 1; display: flex; flex-direction: column; }
+.screen-header.red { background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%); } /* 赤色ヘッダー */
+.screen-content { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; }
 .screen-footer { background: #e9ecef; padding: 8px 12px; border-radius: 4px; font-size: 0.8rem; color: #495057; text-align: center; margin: 15px; }
 
-/* ハンディ画面内の各パーツのスタイル */
-#top-info {
-    background-color: #e9f7ff;
-    border: 1px solid #bde0fe;
-    padding: 10px;
+
+/* --- ▼▼▼ ハンディターミナル内のスタイルのみ修正 ▼▼▼ --- */
+#material-info, #message-area, #instruction-area, #barcode-container {
+    padding: 15px;
     border-radius: 8px;
     margin-bottom: 15px;
-    font-size: 0.9rem;
-}
-#top-info p { margin: 2px 0; }
-
-#material-info, #barcode-info {
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-    margin-bottom: 10px;
-    text-align: left; /* 左揃えに変更 */
-}
-#material-info h3, #barcode-info h3 {
-    font-size: 0.8rem;
-    color: #666;
-    margin-bottom: 5px;
-}
-#material-details {
+    text-align: center;
     font-size: 1.1rem;
     font-weight: bold;
-    color: #e67e22;
-}
-#material-name, #barcode-info p {
-    font-size: 0.9rem;
-    color: #333;
-    margin-left: 10px;
 }
 
-#message-area {
-    background-color: #fff3cd;
-    border: 1px solid #ffeeba;
+.orange-box { background-color: #fff3e0; border: 1px solid #ffe0b2; color: #d35400; }
+.yellow-box { background-color: #fffde7; border: 1px solid #fff59d; color: #f39c12; }
+.green-box { background-color: #e8f5e9; border: 1px solid #c8e6c9; color: #27ae60; }
+.red-border-box { background-color: white; border: 2px solid #e74c3c; }
+
+#material-display { font-size: 1rem; margin-top: 5px; }
+
+#barcode-container input {
+    width: 100%;
     padding: 10px;
-    border-radius: 8px;
-    margin-top: 15px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
     text-align: center;
-    min-height: 40px;
-    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+#barcode-container small {
+    font-size: 0.8rem;
+    color: #c0392b;
 }
 
-.button-group {
-    margin-top: auto;
-    text-align: center;
-    padding-top: 15px;
-}
-.btn-confirm, .btn-back {
-    padding: 10px 30px;
+/* ボタン */
+.button-group { margin-top: auto; text-align: center; }
+.btn-back {
+    background-color: #3498db;
+    color: white;
+    padding: 10px 40px;
     border-radius: 6px;
     font-weight: 600;
     cursor: pointer;
     border: none;
     font-size: 1rem;
-    margin: 0 5px;
-    transition: background-color 0.2s;
-}
-
-/* ★★★ 確定ボタンのスタイルを追加 ★★★ */
-.btn-confirm {
-    background-color: #ecf0f1;
-    color: #2c3e50;
-    border: 1px solid #bdc3c7;
-}
-.btn-confirm:hover { background-color: #dbe0e2; }
-
-.btn-back {
-    background-color: #3498db;
-    color: white;
 }
 .btn-back:hover { background-color: #2980b9; }
