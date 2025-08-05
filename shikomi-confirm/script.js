@@ -86,10 +86,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // ▲▲▲ ここまで最終確認ログ ▲▲▲
 
         try {
-            const response = await fetch('/netlify/functions/process-material-input', {
+                // ★★★ URLを完全な絶対パスに変更 ★★★
+            const functionUrl = `${window.location.origin}/.netlify/functions/process-material-input`;
+            console.log("Requesting URL:", functionUrl); // 送信先のURLをログに出力
+
+            const response = await fetch(functionUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload) // 送信するデータをpayload変数に変更
+                body: JSON.stringify(payload)
             });
 
             // ... (以降の処理は変更なし) ...
@@ -111,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
             confirmButton.disabled = false;
         }
     });
-    
+
     // --- 共通の関数群（変更なし） ---
     async function fetchWorkerName() {
         if (!employeeCode) return;
